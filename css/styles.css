@@ -822,3 +822,34 @@ a:hover { color: var(--sky-dark); }
   .hero { min-height: 380px; }
   .hero-content h1 { font-size: 2rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   LEGAL PAGES (Privacy Policy / Accessibility / Terms)
+   ═══════════════════════════════════════════════════════════ */
+.prose {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.prose h2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+  color: var(--dark);
+  margin-top: 2.5rem;
+  margin-bottom: .6rem;
+  padding-bottom: .4rem;
+  border-bottom: 2px solid var(--border);
+}
+.prose h2:first-child { margin-top: 0; }
+.prose p  { margin-bottom: 1rem; color: var(--text); }
+.prose ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+.prose ul li { margin-bottom: .4rem; color: var(--text); }
+.prose a  { color: var(--dark); }
+.prose strong { color: var(--dark); }
+.prose .last-updated {
+  display: inline-block;
+  background: var(--light);
+  color: var(--text-muted);
+  font-size: .875rem;
+  padding: .35rem .9rem;
+  border-radius: var(--r-sm);
+  margin-bottom: 2rem;
+}
