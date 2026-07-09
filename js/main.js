@@ -39,6 +39,7 @@
   const prevBtn  = hero.querySelector('.hero-prev');
   const nextBtn  = hero.querySelector('.hero-next');
   const liveRgn  = hero.querySelector('.hero-live');
+  const heroVideo = hero.querySelector('.hero-video');
 
   if (!slides.length) return;
 
@@ -47,7 +48,27 @@
   let   current  = 0;
   let   timer    = null;
 
+  const videoIndex = heroVideo
+    ? Array.prototype.indexOf.call(slides, heroVideo.closest('.hero-slide'))
+    : -1;
+
+  function isVideoSlide(idx) { return idx === videoIndex; }
+
+  function playVideoSlide() {
+    if (!heroVideo || reduced) return;
+    heroVideo.currentTime = 0;
+    const playPromise = heroVideo.play();
+    if (playPromise && playPromise.catch) playPromise.catch(function () {});
+  }
+
+  function stopVideoSlide() {
+    if (!heroVideo) return;
+    heroVideo.pause();
+  }
+
   function show(idx) {
+    if (isVideoSlide(current)) stopVideoSlide();
+
     slides[current].classList.remove('active');
     slides[current].setAttribute('aria-hidden', 'true');
     dots[current].classList.remove('active');
@@ -62,6 +83,8 @@
     dots[current].setAttribute('aria-selected', 'true');
     dots[current].setAttribute('tabindex', '0');
 
+    if (isVideoSlide(current)) playVideoSlide();
+
     if (liveRgn) {
       liveRgn.textContent = 'Slide ' + (current + 1) + ' of ' + slides.length;
     }
@@ -70,10 +93,19 @@
   function startAuto() {
     if (reduced) return;
     clearInterval(timer);
+    if (isVideoSlide(current)) return; // advances on the video's 'ended' event instead
     timer = setInterval(function () { show(current + 1); }, INTERVAL);
   }
 
   function stopAuto() { clearInterval(timer); }
+
+  if (heroVideo) {
+    heroVideo.addEventListener('ended', function () {
+      if (!isVideoSlide(current)) return;
+      show(current + 1);
+      startAuto();
+    });
+  }
 
   if (prevBtn) prevBtn.addEventListener('click', function () { show(current - 1); stopAuto(); startAuto(); });
   if (nextBtn) nextBtn.addEventListener('click', function () { show(current + 1); stopAuto(); startAuto(); });
@@ -95,6 +127,11 @@
     if (e.key === 'ArrowLeft')  { show(current - 1); stopAuto(); startAuto(); }
     if (e.key === 'ArrowRight') { show(current + 1); stopAuto(); startAuto(); }
   });
+
+  if (heroVideo && reduced) {
+    heroVideo.pause();
+    heroVideo.removeAttribute('autoplay');
+  }
 
   startAuto();
 }());

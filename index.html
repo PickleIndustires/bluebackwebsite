@@ -62,17 +62,36 @@
       <div class="hero-slides" aria-atomic="false">
         <div
           class="hero-slide active"
+          role="group"
+          aria-roledescription="slide"
+          aria-label="Slide 1 of 9: Property walkthrough video"
+        >
+          <video
+            class="hero-video"
+            poster="videos/hero-video-poster.jpg"
+            autoplay
+            muted
+            playsinline
+            preload="auto"
+            aria-hidden="true"
+          >
+            <source src="videos/hero-video.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div
+          class="hero-slide"
           style="background-image: url('images/hero-6.jpg');"
           role="group"
           aria-roledescription="slide"
-          aria-label="Slide 1 of 8: Perfectly striped lawn with mature trees"
+          aria-label="Slide 2 of 9: Perfectly striped lawn with mature trees"
+          aria-hidden="true"
         ></div>
         <div
           class="hero-slide"
           style="background-image: url('images/hero-1.jpg');"
           role="group"
           aria-roledescription="slide"
-          aria-label="Slide 2 of 8: Maintained residential property"
+          aria-label="Slide 3 of 9: Maintained residential property"
           aria-hidden="true"
         ></div>
         <div
@@ -80,7 +99,7 @@
           style="background-image: url('images/hero-2.jpg');"
           role="group"
           aria-roledescription="slide"
-          aria-label="Slide 3 of 8: Professional landscaping work"
+          aria-label="Slide 4 of 9: Professional landscaping work"
           aria-hidden="true"
         ></div>
         <div
@@ -88,7 +107,7 @@
           style="background-image: url('images/hero-3.jpg');"
           role="group"
           aria-roledescription="slide"
-          aria-label="Slide 4 of 8: Beautiful lawn care results"
+          aria-label="Slide 5 of 9: Beautiful lawn care results"
           aria-hidden="true"
         ></div>
         <div
@@ -96,7 +115,7 @@
           style="background-image: url('images/hero-4.jpg');"
           role="group"
           aria-roledescription="slide"
-          aria-label="Slide 5 of 8: Property maintenance services"
+          aria-label="Slide 6 of 9: Property maintenance services"
           aria-hidden="true"
         ></div>
         <div
@@ -104,7 +123,7 @@
           style="background-image: url('images/hero-5.jpg');"
           role="group"
           aria-roledescription="slide"
-          aria-label="Slide 6 of 8: Zero-turn mower at commercial property"
+          aria-label="Slide 7 of 9: Zero-turn mower at commercial property"
           aria-hidden="true"
         ></div>
         <div
@@ -112,7 +131,7 @@
           style="background-image: url('images/hero-7.jpg');"
           role="group"
           aria-roledescription="slide"
-          aria-label="Slide 7 of 8: Stone house with manicured striped lawn"
+          aria-label="Slide 8 of 9: Stone house with manicured striped lawn"
           aria-hidden="true"
         ></div>
         <div
@@ -120,7 +139,7 @@
           style="background-image: url('images/hero-8.jpg');"
           role="group"
           aria-roledescription="slide"
-          aria-label="Slide 8 of 8: Grand estate with perfectly striped grounds"
+          aria-label="Slide 9 of 9: Grand estate with perfectly striped grounds"
           aria-hidden="true"
         ></div>
       </div>
@@ -143,6 +162,7 @@
         <button class="hero-dot"        role="tab" aria-selected="false" aria-label="Go to slide 6" tabindex="-1" data-index="5"></button>
         <button class="hero-dot"        role="tab" aria-selected="false" aria-label="Go to slide 7" tabindex="-1" data-index="6"></button>
         <button class="hero-dot"        role="tab" aria-selected="false" aria-label="Go to slide 8" tabindex="-1" data-index="7"></button>
+        <button class="hero-dot"        role="tab" aria-selected="false" aria-label="Go to slide 9" tabindex="-1" data-index="8"></button>
       </div>
 
       <div class="hero-live visually-hidden" aria-live="polite" aria-atomic="true"></div>
