@@ -1,8 +1,105 @@
 /* ═══════════════════════════════════════════════════════════
-   HERO CONCEPT: "Job Ticket"
+   PAGE CONCEPT: "Job Ticket"
    Preview-only styles, scoped to this page. Does not touch
    the production stylesheet.
    ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --jt-steel: #24272a;
+  --jt-steel2: #1a1c1e;
+  --jt-steel-mid: #2e3235;
+  --jt-paper: #f2eee4;
+  --jt-hazard: #f0ad1f;
+  --jt-rust: #a8412f;
+}
+
+body { background: var(--jt-paper); }
+
+h1, h2 {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+  color: var(--jt-steel2);
+}
+h3 {
+  font-family: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  font-size: 1rem;
+}
+
+.tag {
+  font-family: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  color: var(--jt-rust);
+  border: 1px solid var(--jt-rust);
+  padding: .25rem .6rem;
+  letter-spacing: .04em;
+}
+
+/* Header */
+.site-header { background: var(--jt-steel2); border-bottom: 4px solid var(--jt-hazard); box-shadow: none; }
+.nav-brand-text { color: var(--jt-paper); }
+.nav-list a { color: color-mix(in srgb, var(--jt-paper) 80%, transparent); }
+.nav-list a:hover { background: var(--jt-steel-mid); color: var(--jt-hazard); }
+.nav-list a[aria-current="page"] { color: var(--jt-hazard); }
+.nav-toggle { border-color: var(--jt-paper); color: var(--jt-paper); }
+@media (max-width: 768px) {
+  .nav-list { background: var(--jt-steel2); border-top-color: var(--jt-steel-mid); }
+}
+
+/* Buttons, used across sections */
+.btn-primary {
+  background: var(--jt-hazard); color: var(--jt-steel2); border-color: var(--jt-hazard);
+  font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: .04em;
+  border-radius: 2px;
+}
+.btn-primary:hover { background: var(--jt-steel2); color: var(--jt-hazard); border-color: var(--jt-hazard); }
+.btn-secondary {
+  background: transparent; color: var(--jt-steel2); border-color: var(--jt-steel2);
+  border-radius: 2px; font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: .04em;
+}
+.btn-secondary:hover { background: var(--jt-steel2); color: var(--jt-paper); }
+
+/* Intro section */
+.section { background: var(--jt-paper); }
+.lead { color: var(--jt-steel2); opacity: .78; }
+.intro-img img { border-radius: 2px; border: 2px solid var(--jt-steel2); }
+
+/* About section */
+.about-home { background: var(--jt-steel-mid); }
+.about-home h2, .about-home .lead { color: var(--jt-paper); }
+.about-home .lead { opacity: .85; }
+.stat-card { background: var(--jt-steel2); border-left: none; border: 1px dashed var(--jt-hazard); border-radius: 2px; }
+.stat-num { color: var(--jt-hazard); font-family: ui-monospace, monospace; }
+.stat-label { color: color-mix(in srgb, var(--jt-paper) 70%, transparent); font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: .05em; }
+.about-logo img { border: 2px solid var(--jt-hazard); border-radius: 2px; padding: 1rem; background: var(--jt-paper); }
+.about-home .btn-secondary { border-color: var(--jt-paper); color: var(--jt-paper); }
+.about-home .btn-secondary:hover { background: var(--jt-paper); color: var(--jt-steel2); }
+
+/* Why section */
+.why-bg::after { background: rgba(26, 28, 30, .82); }
+.why-card { background: var(--jt-paper); backdrop-filter: none; border: 1px dashed var(--jt-steel2); border-radius: 2px; color: var(--jt-steel2); }
+.why-card h3 { color: var(--jt-rust); }
+.why-card p { color: var(--jt-steel2); opacity: .85; }
+.why-inner h2, .why-lead { color: var(--jt-paper); }
+.why-inner .tag { background: color-mix(in srgb, var(--jt-steel2) 40%, transparent); }
+
+/* Contact strip */
+.contact-strip { background: var(--jt-steel2); border-top: 4px solid var(--jt-hazard); }
+.contact-strip-tag { display: block; text-align: center; max-width: max-content; margin: 1.75rem auto 0; }
+.contact-icon, .contact-label { color: var(--jt-hazard); }
+.contact-value, .contact-value a { color: var(--jt-paper); }
+.contact-value a:hover { color: var(--jt-hazard); }
+.social-link { background: var(--jt-steel-mid); border-color: var(--jt-hazard); }
+.social-link:hover { background: var(--jt-hazard); color: var(--jt-steel2); border-color: var(--jt-hazard); }
+
+/* Footer */
+.site-footer { background: var(--jt-steel2); }
+.footer-brand-name { color: var(--jt-paper); }
+.footer-tagline { font-family: ui-monospace, monospace; }
+.footer-col-title { color: var(--jt-hazard); }
+.footer-contact-list a:hover, .footer-links-list a:hover { color: var(--jt-hazard); }
+.footer-bottom { border-top-color: var(--jt-steel-mid); }
 
 .hero-ticket {
   --steel: #24272a;
