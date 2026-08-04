@@ -1,6 +1,271 @@
 (function () {
   'use strict';
 
+  /* ── Analytics (GA4 dataLayer) ───────────────────────────
+     GA4 is not yet installed on this site. dataLayer.push() is
+     safe to call with no tag present — events simply queue in
+     memory and are not sent anywhere. Once a GA4 tag is added
+     (see ANALYTICS-SETUP.md), these events become available as
+     conversions without any further code changes. ─────────── */
+  window.dataLayer = window.dataLayer || [];
+
+  function bbTrack(eventName, params) {
+    window.dataLayer.push(Object.assign({
+      event: eventName,
+      page_path: window.location.pathname
+    }, params || {}));
+  }
+  window.bbTrack = bbTrack;
+
+  function getUtmParams() {
+    var params = new URLSearchParams(window.location.search);
+    var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+    var out = {};
+    keys.forEach(function (k) {
+      var v = params.get(k);
+      if (v) out[k] = v;
+    });
+    return out;
+  }
+
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-analytics-event]');
+    if (el) {
+      bbTrack(el.getAttribute('data-analytics-event'), {
+        cta_location: el.getAttribute('data-analytics-location') || undefined,
+        service: el.getAttribute('data-analytics-service') || undefined,
+        property_type: el.getAttribute('data-analytics-property-type') || undefined
+      });
+      return;
+    }
+    var link = e.target.closest('a[href^="tel:"], a[href^="mailto:"]');
+    if (link) {
+      var isPhone = link.getAttribute('href').indexOf('tel:') === 0;
+      bbTrack(isPhone ? 'phone_click' : 'email_click', {
+        cta_location: link.getAttribute('data-analytics-location') || 'inline'
+      });
+    }
+  });
+
+  /* ── Seasonal Banner ──────────────────────────────────────
+     Edit this object to change the sitewide banner. Every page
+     reads from here — no per-page edits needed. Set enabled to
+     false to turn the banner off everywhere. See CONTENT-GUIDE.md. */
+  var SEASONAL_BANNER = {
+    enabled: true,
+    id: 'fall-2026-cleanup',
+    message: 'Fall project and seasonal cleanup scheduling is now underway.',
+    ctaText: 'Discuss Fall Work',
+    ctaHref: 'seasonal-cleanups.html'
+  };
+
+  (function initSeasonalBanner() {
+    var el = document.getElementById('seasonal-banner');
+    if (!el || !SEASONAL_BANNER.enabled) return;
+
+    var dismissedId = null;
+    try { dismissedId = window.localStorage.getItem('bb_banner_dismissed'); } catch (err) {}
+    if (dismissedId === SEASONAL_BANNER.id) return;
+
+    el.innerHTML =
+      '<div class="seasonal-banner-inner">' +
+        '<p><span class="seasonal-banner-msg"></span> ' +
+        '<a class="seasonal-banner-cta" href="' + SEASONAL_BANNER.ctaHref + '" data-analytics-event="seasonal_banner_cta"></a></p>' +
+        '<button type="button" class="seasonal-banner-close" aria-label="Dismiss announcement">&times;</button>' +
+      '</div>';
+    el.querySelector('.seasonal-banner-msg').textContent = SEASONAL_BANNER.message;
+    var cta = el.querySelector('.seasonal-banner-cta');
+    cta.textContent = SEASONAL_BANNER.ctaText;
+    el.hidden = false;
+
+    el.querySelector('.seasonal-banner-close').addEventListener('click', function () {
+      el.hidden = true;
+      try { window.localStorage.setItem('bb_banner_dismissed', SEASONAL_BANNER.id); } catch (err) {}
+    });
+  }());
+
+  /* ── Nav Dropdown (Services) ─────────────────────────────── */
+  (function initNavDropdown() {
+    var items = document.querySelectorAll('.nav-has-dropdown');
+    items.forEach(function (item) {
+      var btn = item.querySelector('.nav-dropdown-toggle');
+      var menu = item.querySelector('.nav-dropdown');
+      if (!btn || !menu) return;
+
+      btn.addEventListener('click', function () {
+        var open = item.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open);
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!item.contains(e.target)) {
+          item.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      item.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          item.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.focus();
+        }
+      });
+    });
+  }());
+
+  /* ── FAQ Accordion ────────────────────────────────────────── */
+  (function initFaq() {
+    var questions = document.querySelectorAll('.faq-question');
+    questions.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var item = btn.closest('.faq-item');
+        var open = item.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open);
+      });
+    });
+  }());
+
+  /* ── Project Filters (progressive enhancement) ──────────── */
+  (function initProjectFilters() {
+    var bar = document.querySelector('.project-filters');
+    var cards = document.querySelectorAll('.project-card');
+    if (!bar || !cards.length) return;
+
+    bar.addEventListener('click', function (e) {
+      var btn = e.target.closest('.project-filter-btn');
+      if (!btn) return;
+
+      bar.querySelectorAll('.project-filter-btn').forEach(function (b) {
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.setAttribute('aria-pressed', 'true');
+
+      var cat = btn.getAttribute('data-filter');
+      cards.forEach(function (card) {
+        var show = cat === 'all' || card.getAttribute('data-category') === cat;
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  }());
+
+  /* ── Blue Back Forms (consultation / commercial inquiry) ──
+     Backed by Formspree (https://formspree.io/f/meeyybkv). See
+     ANALYTICS-SETUP.md / CONTENT-GUIDE.md for how to change or
+     replace this. If FORM_ENDPOINT is ever reset to the literal
+     string below, submissions fall back to a pre-filled mailto:
+     instead of silently failing. */
+  var FORM_ENDPOINT = 'https://formspree.io/f/meeyybkv';
+
+  function initBlueBackForms() {
+    var forms = document.querySelectorAll('.bb-form');
+    forms.forEach(function (form) {
+      var started = false;
+      var statusEl = form.querySelector('.form-status');
+
+      // Hidden UTM fields
+      var utm = getUtmParams();
+      Object.keys(utm).forEach(function (key) {
+        var field = form.querySelector('[name="' + key + '"]');
+        if (field) field.value = utm[key];
+      });
+
+      form.addEventListener('input', function () {
+        if (!started) {
+          started = true;
+          bbTrack('quote_form_start', { form_id: form.id || undefined });
+        }
+      }, { once: false, capture: true });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Honeypot — if filled, silently drop (bot). "_gotcha" is Formspree's
+        // own honeypot convention, so spam is filtered server-side too.
+        var honeypot = form.querySelector('input[name="_gotcha"]');
+        if (honeypot && honeypot.value) return;
+
+        var valid = true;
+        form.querySelectorAll('[required]').forEach(function (field) {
+          var wrap = field.closest('.form-field');
+          var ok = field.type === 'checkbox' ? field.checked : field.value.trim() !== '';
+          if (wrap) wrap.classList.toggle('invalid', !ok);
+          if (!ok) valid = false;
+        });
+        if (!valid) {
+          if (statusEl) {
+            statusEl.textContent = 'Please fill in the required fields highlighted below.';
+            statusEl.className = 'form-status visible error';
+          }
+          var firstInvalid = form.querySelector('.form-field.invalid input, .form-field.invalid select, .form-field.invalid textarea');
+          if (firstInvalid) firstInvalid.focus();
+          return;
+        }
+
+        var formData = new FormData(form);
+        var thankYouUrl = form.getAttribute('data-success-url') || 'thank-you.html';
+
+        if (FORM_ENDPOINT === 'REPLACE_WITH_FORM_ENDPOINT') {
+          // Fallback: open a pre-filled email instead of a fake success state.
+          var lines = [];
+          formData.forEach(function (value, key) {
+            if (key === '_gotcha' || !value) return;
+            lines.push(key + ': ' + value);
+          });
+          var subject = encodeURIComponent('Website inquiry — ' + (form.getAttribute('data-form-name') || 'Blue Back Landscaping'));
+          var body = encodeURIComponent(lines.join('\n'));
+          window.location.href = 'mailto:info@bluebacklandscaping.com?subject=' + subject + '&body=' + body;
+
+          if (statusEl) {
+            statusEl.textContent = 'Your email app should now open with your request pre-filled. If it did not open, please email info@bluebacklandscaping.com or call (860) 735-4145.';
+            statusEl.className = 'form-status visible success';
+          }
+          bbTrack('quote_form_submit', { form_id: form.id || undefined, submit_method: 'mailto_fallback' });
+          return;
+        }
+
+        fetch(FORM_ENDPOINT, { method: 'POST', body: formData, headers: { Accept: 'application/json' } })
+          .then(function (res) {
+            if (res.ok) {
+              bbTrack('quote_form_submit', { form_id: form.id || undefined, submit_method: 'endpoint' });
+              window.location.href = thankYouUrl;
+            } else {
+              throw new Error('Form submission failed');
+            }
+          })
+          .catch(function () {
+            if (statusEl) {
+              statusEl.textContent = 'Something went wrong sending your request. Please call (860) 735-4145 or email info@bluebacklandscaping.com directly.';
+              statusEl.className = 'form-status visible error';
+            }
+          });
+      });
+    });
+  }
+  initBlueBackForms();
+
+  /* ── Pre-select service from ?service= query param ───────── */
+  (function preselectService() {
+    var select = document.getElementById('q-service');
+    if (!select) return;
+    var wanted = new URLSearchParams(window.location.search).get('service');
+    if (!wanted) return;
+    var map = {
+      drainage: 'Drainage', grading: 'Grading or Lawn Restoration', renovation: 'Landscape Renovation',
+      walkway: 'Walkway or Hardscape', estate: 'Estate Grounds Management', commercial: 'Commercial Maintenance',
+      cleanup: 'Seasonal Cleanup', maintenance: 'Commercial Maintenance', snow: 'Snow and Ice'
+    };
+    var label = map[wanted];
+    if (!label) return;
+    Array.prototype.forEach.call(select.options, function (opt) {
+      if (opt.textContent.trim() === label) select.value = opt.value;
+    });
+  }());
+
+  /* ── Footer Year ──────────────────────────────────────────── */
+  var yearEl = document.getElementById('footer-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
   /* ── Mobile Nav ───────────────────────────────────────── */
   const toggle  = document.querySelector('.nav-toggle');
   const navList = document.getElementById('primary-nav');
