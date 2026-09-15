@@ -47,41 +47,151 @@
     }
   });
 
-  /* ── Seasonal Banner ──────────────────────────────────────
-     Edit this object to change the sitewide banner. Every page
-     reads from here — no per-page edits needed. Set enabled to
-     false to turn the banner off everywhere. See CONTENT-GUIDE.md. */
-  var SEASONAL_BANNER = {
-    enabled: true,
-    id: 'fall-2026-cleanup',
-    message: 'Fall project and seasonal cleanup scheduling is now underway.',
-    ctaText: 'Discuss Fall Work',
-    ctaHref: 'seasonal-cleanups.html'
+  /* ── Seasonal Campaign System ─────────────────────────────
+     Single source of truth for all seasonal marketing on the
+     site (banner + homepage seasonal section). To change what's
+     promoted, edit ACTIVE_SEASONAL_CAMPAIGNS below — no per-page
+     or per-template edits needed anywhere else. Valid campaign
+     keys: NONE, FALL, SNOW_PRESEASON, WINTER, SPRING. More than
+     one can be active at once (e.g. FALL + SNOW_PRESEASON during
+     late summer/fall). Set the array to [] (or ['NONE']) to turn
+     all seasonal promotion off. See CONTENT-GUIDE.md. */
+  var SEASONAL_CAMPAIGNS = {
+    FALL: {
+      id: 'fall-cleanup-2026',
+      banner: {
+        message: 'Fall cleanup scheduling is now underway.',
+        ctaText: 'Request Fall Cleanup',
+        ctaHref: 'seasonal-cleanups.html?service=cleanup'
+      },
+      homepage: {
+        eyebrow: 'Fall Property Care',
+        title: 'Fall Cleanup',
+        copy: 'Thorough leaf removal and seasonal cleanup for residential properties, estates, HOAs, and commercial sites.',
+        ctaText: 'Request Fall Cleanup',
+        ctaHref: 'seasonal-cleanups.html?service=cleanup',
+        image: 'images/service-seasonal-maintenance.jpg',
+        imageAlt: 'Freshly mulched bed and cleared tree ring during a seasonal cleanup'
+      }
+    },
+    SNOW_PRESEASON: {
+      id: 'snow-preseason-2026',
+      banner: {
+        message: 'Commercial snow contract planning is now underway.',
+        ctaText: 'Discuss Commercial Snow Service',
+        ctaHref: 'snow-ice-management.html'
+      },
+      homepage: {
+        eyebrow: 'Winter Property Management',
+        title: 'Snow & Ice Management',
+        copy: 'Preseason planning and contracted winter property service for qualifying commercial properties, HOAs, estates, and managed sites.',
+        ctaText: 'Discuss Snow Service',
+        ctaHref: 'commercial.html#commercial-inquiry',
+        image: 'images/service-snow-management.jpg',
+        imageAlt: 'Truck with plow clearing a driveway after a winter storm'
+      }
+    },
+    WINTER: {
+      id: 'winter-active-2026',
+      banner: {
+        message: 'Snow and ice management is in active winter service.',
+        ctaText: 'Request a Snow & Ice Site Walk',
+        ctaHref: 'commercial.html#commercial-inquiry'
+      },
+      homepage: {
+        eyebrow: 'Winter Property Management',
+        title: 'Snow & Ice Management',
+        copy: 'Contracted plowing, walkway clearing, and deicing for commercial properties, HOAs, estates, and managed sites throughout Greater Hartford.',
+        ctaText: 'Request a Snow & Ice Site Walk',
+        ctaHref: 'commercial.html#commercial-inquiry',
+        image: 'images/service-snow-management.jpg',
+        imageAlt: 'Truck with plow clearing a driveway after a winter storm'
+      }
+    },
+    SPRING: {
+      id: 'spring-renovation-2026',
+      banner: {
+        message: 'Spring drainage, grading, and landscape renovation projects are being scheduled.',
+        ctaText: 'Request a Project Consultation',
+        ctaHref: 'landscape-renovations.html'
+      },
+      homepage: {
+        eyebrow: 'Spring Property Care',
+        title: 'Drainage & Landscape Renovation',
+        copy: 'Drainage, grading, lawn restoration, cleanup, and landscape renovation for properties preparing for the season ahead.',
+        ctaText: 'Request a Project Consultation',
+        ctaHref: 'landscape-renovations.html',
+        image: 'images/service-drainage.jpg',
+        imageAlt: 'French drain trench with gravel and pipe during installation'
+      }
+    }
   };
+
+  /* Edit this array to control what's live sitewide right now. */
+  var ACTIVE_SEASONAL_CAMPAIGNS = ['FALL', 'SNOW_PRESEASON'];
+
+  function getActiveCampaigns() {
+    return ACTIVE_SEASONAL_CAMPAIGNS
+      .map(function (key) { return SEASONAL_CAMPAIGNS[key]; })
+      .filter(Boolean);
+  }
 
   (function initSeasonalBanner() {
     var el = document.getElementById('seasonal-banner');
-    if (!el || !SEASONAL_BANNER.enabled) return;
+    var campaigns = getActiveCampaigns();
+    if (!el || !campaigns.length) return;
 
+    var bannerId = campaigns.map(function (c) { return c.id; }).join('|');
     var dismissedId = null;
     try { dismissedId = window.localStorage.getItem('bb_banner_dismissed'); } catch (err) {}
-    if (dismissedId === SEASONAL_BANNER.id) return;
+    if (dismissedId === bannerId) return;
+
+    var links = campaigns.map(function (c, i) {
+      return '<a class="seasonal-banner-cta" href="' + c.banner.ctaHref + '" data-analytics-event="seasonal_banner_cta" data-analytics-location="banner_' + i + '">' + c.banner.ctaText + '</a>';
+    }).join(' ');
+    var message = campaigns.map(function (c) { return c.banner.message; }).join(' ');
 
     el.innerHTML =
       '<div class="seasonal-banner-inner">' +
-        '<p><span class="seasonal-banner-msg"></span> ' +
-        '<a class="seasonal-banner-cta" href="' + SEASONAL_BANNER.ctaHref + '" data-analytics-event="seasonal_banner_cta"></a></p>' +
+        '<p><span class="seasonal-banner-msg"></span> ' + links + '</p>' +
         '<button type="button" class="seasonal-banner-close" aria-label="Dismiss announcement">&times;</button>' +
       '</div>';
-    el.querySelector('.seasonal-banner-msg').textContent = SEASONAL_BANNER.message;
-    var cta = el.querySelector('.seasonal-banner-cta');
-    cta.textContent = SEASONAL_BANNER.ctaText;
+    el.querySelector('.seasonal-banner-msg').textContent = message;
     el.hidden = false;
 
     el.querySelector('.seasonal-banner-close').addEventListener('click', function () {
       el.hidden = true;
-      try { window.localStorage.setItem('bb_banner_dismissed', SEASONAL_BANNER.id); } catch (err) {}
+      try { window.localStorage.setItem('bb_banner_dismissed', bannerId); } catch (err) {}
     });
+  }());
+
+  /* ── Homepage Seasonal Section ────────────────────────────
+     Populates #seasonal-section on the homepage from the same
+     ACTIVE_SEASONAL_CAMPAIGNS config used by the banner above. */
+  (function initHomepageSeasonalSection() {
+    var section = document.getElementById('seasonal-section');
+    if (!section) return;
+    var grid = section.querySelector('.seasonal-section-grid');
+    var campaigns = getActiveCampaigns();
+    if (!grid || !campaigns.length) {
+      section.hidden = true;
+      return;
+    }
+
+    grid.innerHTML = campaigns.map(function (c) {
+      var h = c.homepage;
+      return (
+        '<div class="seasonal-card">' +
+          '<picture><img src="' + h.image + '" alt="' + h.imageAlt + '" loading="lazy" width="400" height="220" /></picture>' +
+          '<div class="seasonal-card-body">' +
+            '<h3>' + h.title + '</h3>' +
+            '<p>' + h.copy + '</p>' +
+            '<a class="btn btn-sky" href="' + h.ctaHref + '" data-analytics-event="seasonal_section_cta" data-analytics-location="homepage_seasonal">' + h.ctaText + '</a>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+    section.hidden = false;
   }());
 
   /* ── Nav Dropdown (Services) ─────────────────────────────── */

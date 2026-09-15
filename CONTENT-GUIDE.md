@@ -41,24 +41,20 @@ Once the business owner supplies real, verifiable reviews (screenshot or direct 
 
 Never rewrite a review's wording or invent one — only paste verified quotes.
 
-## How to change the seasonal banner
+## How to change the seasonal campaign
 
-Everything is controlled from **one place**: the `SEASONAL_BANNER` object near the top of `js/main.js`:
+Everything — the sitewide banner AND the homepage "Prepare the Property for the Seasons Ahead" section — is controlled from **one place**: `ACTIVE_SEASONAL_CAMPAIGNS` near the top of `js/main.js`:
 
 ```js
-var SEASONAL_BANNER = {
-  enabled: true,
-  id: 'fall-2026-cleanup',
-  message: 'Fall project and seasonal cleanup scheduling is now underway.',
-  ctaText: 'Discuss Fall Work',
-  ctaHref: 'seasonal-cleanups.html'
-};
+var ACTIVE_SEASONAL_CAMPAIGNS = ['FALL', 'SNOW_PRESEASON'];
 ```
 
-- Set `enabled: false` to turn the banner off everywhere at once.
-- Change `message`, `ctaText`, `ctaHref` for a new season.
-- **Always change `id` when you change the message** — visitors who dismissed a previous banner won't see the new one unless the `id` is different (dismissal is remembered per `id` in `localStorage`).
-- This one edit updates the banner on every page — no per-page changes needed.
+Valid keys are defined in the `SEASONAL_CAMPAIGNS` object just above it: `FALL`, `SNOW_PRESEASON`, `WINTER`, `SPRING`. There is no separate `NONE` key — set the array to `[]` to turn all seasonal promotion off everywhere.
+
+- More than one campaign can be active at once (e.g. `['FALL', 'SNOW_PRESEASON']` during late summer/fall).
+- Each campaign key has its own `banner` copy/CTA and `homepage` copy/CTA/image — edit those objects to change wording for a season. No per-page or per-template edits are needed; every page reads from this one config.
+- **Always change a campaign's `id` when you change its message** — visitors who dismissed a previous banner won't see the new one unless the `id` is different (dismissal is remembered per combined banner `id` in `localStorage`).
+- If `ACTIVE_SEASONAL_CAMPAIGNS` is empty, both the banner and the homepage section stay hidden automatically.
 
 ## How to replace hero images
 

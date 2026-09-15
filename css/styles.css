@@ -1079,6 +1079,27 @@ a.team-card:hover .team-name { color: var(--sky-dark); }
 }
 .seasonal-banner-close:hover { color: var(--white); }
 
+.seasonal-section[hidden] { display: none; }
+.seasonal-section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+.seasonal-card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+}
+.seasonal-card picture,
+.seasonal-card img { display: block; width: 100%; height: 200px; object-fit: cover; }
+.seasonal-card-body { padding: 1.5rem 1.75rem 1.85rem; }
+.seasonal-card-body h3 { margin: 0 0 .5rem; }
+.seasonal-card-body p { color: var(--text-muted); margin: 0 0 1.25rem; line-height: 1.65; }
+
 /* ─── Header: phone + CTA + dropdown ─────────────────────── */
 .nav-header-actions { display: flex; align-items: center; gap: .85rem; min-width: 0; }
 .nav-phone {

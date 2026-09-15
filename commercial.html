@@ -359,6 +359,23 @@
       </section>
     -->
 
+    <!-- ── Winter Lead Generation ───────────────────────────── -->
+    <section class="section" style="background:var(--light);" aria-labelledby="winter-heading">
+      <div class="inner">
+        <p class="tag">Winter Property Management</p>
+        <h2 id="winter-heading">Plan Snow Service Before the First Storm</h2>
+        <p class="lead" style="max-width:100%;">
+          Commercial snow management works best when the property, priorities, and service scope are
+          established before winter weather arrives. Blue Back works with qualifying businesses, HOAs,
+          estates, and managed properties to develop appropriate seasonal snow and ice service.
+        </p>
+        <div class="static-hero-ctas">
+          <a href="#commercial-inquiry" class="btn btn-primary" data-analytics-event="commercial_site_walk_click" data-analytics-location="commercial_winter_section">Request a Snow &amp; Ice Site Walk</a>
+          <a href="#commercial-inquiry" class="btn btn-secondary" data-analytics-event="commercial_page_cta" data-analytics-location="commercial_winter_section">Discuss a Winter Contract</a>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Commercial Inquiry Form ─────────────────────────── -->
     <section class="section form-section" id="commercial-inquiry" aria-labelledby="form-heading">
       <div class="inner" style="max-width:800px;">
@@ -447,19 +464,35 @@
             <input type="text" id="c-services" name="services_requested" placeholder="e.g. mowing, snow plowing, drainage" />
           </div>
 
+          <fieldset class="form-field" style="border:1px solid var(--light);border-radius:var(--r-md);padding:1rem 1.25rem;">
+            <legend style="font-weight:700;padding:0 .35rem;">Snow &amp; Ice Management</legend>
+            <p class="form-hint" style="margin:0 0 .75rem;">If you're requesting winter service, let us know what's needed. Only select services Blue Back actually provides for your property type.</p>
+            <div class="icon-list" style="display:flex;flex-direction:column;gap:.5rem;">
+              <label style="display:flex;align-items:center;gap:.5rem;font-weight:400;">
+                <input type="checkbox" name="snow_plowing_requested" value="yes" /> Snow plowing requested
+              </label>
+              <label style="display:flex;align-items:center;gap:.5rem;font-weight:400;">
+                <input type="checkbox" name="deicing_requested" value="yes" /> Deicing requested
+              </label>
+              <label style="display:flex;align-items:center;gap:.5rem;font-weight:400;">
+                <input type="checkbox" name="walkway_clearing_requested" value="yes" /> Walkway clearing requested
+              </label>
+            </div>
+          </fieldset>
+
           <div class="form-row">
             <div class="form-field">
               <label for="c-contract-end">Current Contract End Date</label>
               <input type="text" id="c-contract-end" name="current_contract_end" placeholder="MM/YYYY or N/A" />
             </div>
             <div class="form-field">
-              <label for="c-start">Desired Start Date</label>
+              <label for="c-start">Desired Contract Start</label>
               <input type="text" id="c-start" name="desired_start_date" />
             </div>
           </div>
 
           <div class="form-field">
-            <label for="c-bid-due">Bid Due Date</label>
+            <label for="c-bid-due">Bid/Proposal Due Date</label>
             <input type="text" id="c-bid-due" name="bid_due_date" placeholder="If this is a formal bid" />
           </div>
 
