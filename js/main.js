@@ -62,15 +62,15 @@
       banner: {
         message: 'Fall cleanup scheduling is now underway.',
         ctaText: 'Request Fall Cleanup',
-        ctaHref: 'seasonal-cleanups.html?service=cleanup'
+        ctaHref: '/seasonal-cleanups.html?service=cleanup'
       },
       homepage: {
         eyebrow: 'Fall Property Care',
         title: 'Fall Cleanup',
         copy: 'Thorough leaf removal and seasonal cleanup for residential properties, estates, HOAs, and commercial sites.',
         ctaText: 'Request Fall Cleanup',
-        ctaHref: 'seasonal-cleanups.html?service=cleanup',
-        image: 'images/service-seasonal-maintenance.jpg',
+        ctaHref: '/seasonal-cleanups.html?service=cleanup',
+        image: '/images/service-seasonal-maintenance.jpg',
         imageAlt: 'Freshly mulched bed and cleared tree ring during a seasonal cleanup'
       }
     },
@@ -79,15 +79,15 @@
       banner: {
         message: 'Commercial snow contract planning is now underway.',
         ctaText: 'Discuss Commercial Snow Service',
-        ctaHref: 'snow-ice-management.html'
+        ctaHref: '/snow-ice-management.html'
       },
       homepage: {
         eyebrow: 'Winter Property Management',
         title: 'Snow & Ice Management',
         copy: 'Preseason planning and contracted winter property service for qualifying commercial properties, HOAs, estates, and managed sites.',
         ctaText: 'Discuss Snow Service',
-        ctaHref: 'commercial.html#commercial-inquiry',
-        image: 'images/service-snow-management.jpg',
+        ctaHref: '/commercial.html#commercial-inquiry',
+        image: '/images/service-snow-management.jpg',
         imageAlt: 'Truck with plow clearing a driveway after a winter storm'
       }
     },
@@ -96,15 +96,15 @@
       banner: {
         message: 'Snow and ice management is in active winter service.',
         ctaText: 'Request a Snow & Ice Site Walk',
-        ctaHref: 'commercial.html#commercial-inquiry'
+        ctaHref: '/commercial.html#commercial-inquiry'
       },
       homepage: {
         eyebrow: 'Winter Property Management',
         title: 'Snow & Ice Management',
         copy: 'Contracted plowing, walkway clearing, and deicing for commercial properties, HOAs, estates, and managed sites throughout Greater Hartford.',
         ctaText: 'Request a Snow & Ice Site Walk',
-        ctaHref: 'commercial.html#commercial-inquiry',
-        image: 'images/service-snow-management.jpg',
+        ctaHref: '/commercial.html#commercial-inquiry',
+        image: '/images/service-snow-management.jpg',
         imageAlt: 'Truck with plow clearing a driveway after a winter storm'
       }
     },
@@ -113,15 +113,15 @@
       banner: {
         message: 'Spring drainage, grading, and landscape renovation projects are being scheduled.',
         ctaText: 'Request a Project Consultation',
-        ctaHref: 'landscape-renovations.html'
+        ctaHref: '/landscape-renovations.html'
       },
       homepage: {
         eyebrow: 'Spring Property Care',
         title: 'Drainage & Landscape Renovation',
         copy: 'Drainage, grading, lawn restoration, cleanup, and landscape renovation for properties preparing for the season ahead.',
         ctaText: 'Request a Project Consultation',
-        ctaHref: 'landscape-renovations.html',
-        image: 'images/service-drainage.jpg',
+        ctaHref: '/landscape-renovations.html',
+        image: '/images/service-drainage.jpg',
         imageAlt: 'French drain trench with gravel and pipe during installation'
       }
     }
@@ -406,115 +406,117 @@
   }
 
   /* ── Hero Carousel ────────────────────────────────────── */
-  const hero = document.querySelector('.hero');
-  if (!hero) return;
+  (function () {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
 
-  const slides   = hero.querySelectorAll('.hero-slide');
-  const dots     = hero.querySelectorAll('.hero-dot');
-  const prevBtn  = hero.querySelector('.hero-prev');
-  const nextBtn  = hero.querySelector('.hero-next');
-  const liveRgn  = hero.querySelector('.hero-live');
-  const heroVideos = hero.querySelectorAll('.hero-video');
+    const slides   = hero.querySelectorAll('.hero-slide');
+    const dots     = hero.querySelectorAll('.hero-dot');
+    const prevBtn  = hero.querySelector('.hero-prev');
+    const nextBtn  = hero.querySelector('.hero-next');
+    const liveRgn  = hero.querySelector('.hero-live');
+    const heroVideos = hero.querySelectorAll('.hero-video');
 
-  if (!slides.length) return;
+    if (!slides.length) return;
 
-  const INTERVAL = 5500;
-  const reduced  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let   current  = 0;
-  let   timer    = null;
+    const INTERVAL = 5500;
+    const reduced  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let   current  = 0;
+    let   timer    = null;
 
-  const videoBySlideIndex = new Map();
-  heroVideos.forEach(function (video) {
-    const idx = Array.prototype.indexOf.call(slides, video.closest('.hero-slide'));
-    if (idx !== -1) videoBySlideIndex.set(idx, video);
-  });
-
-  function isVideoSlide(idx) { return videoBySlideIndex.has(idx); }
-
-  function playVideoSlide(idx) {
-    if (reduced) return;
-    const video = videoBySlideIndex.get(idx);
-    if (!video) return;
-    video.currentTime = 0;
-    const playPromise = video.play();
-    if (playPromise && playPromise.catch) playPromise.catch(function () {});
-  }
-
-  function stopVideoSlide(idx) {
-    const video = videoBySlideIndex.get(idx);
-    if (video) video.pause();
-  }
-
-  function show(idx) {
-    if (isVideoSlide(current)) stopVideoSlide(current);
-
-    slides[current].classList.remove('active');
-    slides[current].setAttribute('aria-hidden', 'true');
-    dots[current].classList.remove('active');
-    dots[current].setAttribute('aria-selected', 'false');
-    dots[current].setAttribute('tabindex', '-1');
-
-    current = ((idx % slides.length) + slides.length) % slides.length;
-
-    slides[current].classList.add('active');
-    slides[current].removeAttribute('aria-hidden');
-    dots[current].classList.add('active');
-    dots[current].setAttribute('aria-selected', 'true');
-    dots[current].setAttribute('tabindex', '0');
-
-    if (isVideoSlide(current)) playVideoSlide(current);
-
-    if (liveRgn) {
-      liveRgn.textContent = 'Slide ' + (current + 1) + ' of ' + slides.length;
-    }
-  }
-
-  function startAuto() {
-    if (reduced) return;
-    clearInterval(timer);
-    if (isVideoSlide(current)) return; // advances on the video's 'ended' event instead
-    timer = setInterval(function () { show(current + 1); }, INTERVAL);
-  }
-
-  function stopAuto() { clearInterval(timer); }
-
-  videoBySlideIndex.forEach(function (video, idx) {
-    video.addEventListener('ended', function () {
-      if (current !== idx) return;
-      show(current + 1);
-      startAuto();
-    });
-  });
-
-  if (prevBtn) prevBtn.addEventListener('click', function () { show(current - 1); stopAuto(); startAuto(); });
-  if (nextBtn) nextBtn.addEventListener('click', function () { show(current + 1); stopAuto(); startAuto(); });
-
-  dots.forEach(function (dot, i) {
-    dot.addEventListener('click', function () { show(i); stopAuto(); startAuto(); });
-    dot.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { dots[(i + 1) % dots.length].focus(); }
-      if (e.key === 'ArrowLeft')  { dots[(i - 1 + dots.length) % dots.length].focus(); }
-    });
-  });
-
-  hero.addEventListener('mouseenter', stopAuto);
-  hero.addEventListener('mouseleave', startAuto);
-  hero.addEventListener('focusin',    stopAuto);
-  hero.addEventListener('focusout',   startAuto);
-
-  hero.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowLeft')  { show(current - 1); stopAuto(); startAuto(); }
-    if (e.key === 'ArrowRight') { show(current + 1); stopAuto(); startAuto(); }
-  });
-
-  if (reduced) {
+    const videoBySlideIndex = new Map();
     heroVideos.forEach(function (video) {
-      video.pause();
-      video.removeAttribute('autoplay');
+      const idx = Array.prototype.indexOf.call(slides, video.closest('.hero-slide'));
+      if (idx !== -1) videoBySlideIndex.set(idx, video);
     });
-  }
 
-  startAuto();
+    function isVideoSlide(idx) { return videoBySlideIndex.has(idx); }
+
+    function playVideoSlide(idx) {
+      if (reduced) return;
+      const video = videoBySlideIndex.get(idx);
+      if (!video) return;
+      video.currentTime = 0;
+      const playPromise = video.play();
+      if (playPromise && playPromise.catch) playPromise.catch(function () {});
+    }
+
+    function stopVideoSlide(idx) {
+      const video = videoBySlideIndex.get(idx);
+      if (video) video.pause();
+    }
+
+    function show(idx) {
+      if (isVideoSlide(current)) stopVideoSlide(current);
+
+      slides[current].classList.remove('active');
+      slides[current].setAttribute('aria-hidden', 'true');
+      dots[current].classList.remove('active');
+      dots[current].setAttribute('aria-selected', 'false');
+      dots[current].setAttribute('tabindex', '-1');
+
+      current = ((idx % slides.length) + slides.length) % slides.length;
+
+      slides[current].classList.add('active');
+      slides[current].removeAttribute('aria-hidden');
+      dots[current].classList.add('active');
+      dots[current].setAttribute('aria-selected', 'true');
+      dots[current].setAttribute('tabindex', '0');
+
+      if (isVideoSlide(current)) playVideoSlide(current);
+
+      if (liveRgn) {
+        liveRgn.textContent = 'Slide ' + (current + 1) + ' of ' + slides.length;
+      }
+    }
+
+    function startAuto() {
+      if (reduced) return;
+      clearInterval(timer);
+      if (isVideoSlide(current)) return; // advances on the video's 'ended' event instead
+      timer = setInterval(function () { show(current + 1); }, INTERVAL);
+    }
+
+    function stopAuto() { clearInterval(timer); }
+
+    videoBySlideIndex.forEach(function (video, idx) {
+      video.addEventListener('ended', function () {
+        if (current !== idx) return;
+        show(current + 1);
+        startAuto();
+      });
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { show(current - 1); stopAuto(); startAuto(); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { show(current + 1); stopAuto(); startAuto(); });
+
+    dots.forEach(function (dot, i) {
+      dot.addEventListener('click', function () { show(i); stopAuto(); startAuto(); });
+      dot.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { dots[(i + 1) % dots.length].focus(); }
+        if (e.key === 'ArrowLeft')  { dots[(i - 1 + dots.length) % dots.length].focus(); }
+      });
+    });
+
+    hero.addEventListener('mouseenter', stopAuto);
+    hero.addEventListener('mouseleave', startAuto);
+    hero.addEventListener('focusin',    stopAuto);
+    hero.addEventListener('focusout',   startAuto);
+
+    hero.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft')  { show(current - 1); stopAuto(); startAuto(); }
+      if (e.key === 'ArrowRight') { show(current + 1); stopAuto(); startAuto(); }
+    });
+
+    if (reduced) {
+      heroVideos.forEach(function (video) {
+        video.pause();
+        video.removeAttribute('autoplay');
+      });
+    }
+
+    startAuto();
+  }());
 
   /* ── Gallery Lightbox ─────────────────────────────────── */
   const galleryItems = Array.prototype.slice.call(document.querySelectorAll('.gallery-item'));
@@ -585,6 +587,13 @@
       if (e.key === 'Escape')     closeLightbox();
       if (e.key === 'ArrowRight') renderItem(activeIndex + 1);
       if (e.key === 'ArrowLeft')  renderItem(activeIndex - 1);
+      if (e.key === 'Tab') {
+        const focusable = lightbox.querySelectorAll('button, video[controls]');
+        const first = focusable[0];
+        const last  = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
     });
   }
 }());

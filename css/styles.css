@@ -8,7 +8,7 @@
 /* ─── Custom Properties ─────────────────────────────────── */
 :root {
   --sky:          #4BBDE8;
-  --sky-dark:     #33A8D4;
+  --sky-dark:     #197399;
   --light:        #E6EEF3;
   --dark:         #2D5F7A;
   --dark-deep:    #1E4157;
@@ -74,10 +74,17 @@ ul { list-style: none; }
 
 /* ─── Focus Styles ────────────────────────────────────────── */
 :focus-visible {
-  outline: 3px solid var(--sky);
+  outline: 3px solid var(--sky-dark);
   outline-offset: 3px;
   border-radius: var(--r-sm);
 }
+.hero :focus-visible,
+.page-hero :focus-visible,
+.static-hero :focus-visible,
+.cta-banner :focus-visible,
+.contact-strip :focus-visible,
+.seasonal-banner :focus-visible,
+.site-footer :focus-visible { outline-color: var(--sky); }
 
 /* ─── Typography ─────────────────────────────────────────── */
 h1, h2, h3 { line-height: 1.2; font-weight: 800; color: var(--dark); }
@@ -103,7 +110,7 @@ a:hover { color: var(--sky-dark); }
   transition: all var(--ease);
   letter-spacing: .02em;
 }
-.btn:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
+.btn:focus-visible { outline-width: 3px; outline-style: solid; outline-offset: 3px; }
 
 .btn-primary {
   background: var(--dark);
@@ -538,7 +545,7 @@ a:hover { color: var(--sky-dark); }
 }
 .gallery-item:hover img,
 .gallery-item:focus-visible img { transform: scale(1.06); }
-.gallery-item:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+.gallery-item:focus-visible { outline: 3px solid var(--sky-dark); outline-offset: 2px; }
 
 .gallery-item-video::after {
   content: '';
@@ -1327,7 +1334,7 @@ a.team-card:hover .team-name { color: var(--sky-dark); }
 .process-step-num {
   font-size: 2.25rem;
   font-weight: 800;
-  color: var(--sky);
+  color: var(--sky-dark);
   line-height: 1;
   margin-bottom: .75rem;
 }
@@ -1446,7 +1453,7 @@ a.team-card:hover .team-name { color: var(--sky-dark); }
 }
 .form-field input:focus,
 .form-field select:focus,
-.form-field textarea:focus { outline: 3px solid var(--sky); outline-offset: 1px; border-color: var(--sky-dark); }
+.form-field textarea:focus { outline: 3px solid var(--sky-dark); outline-offset: 1px; border-color: var(--sky-dark); }
 .form-field textarea { resize: vertical; min-height: 110px; }
 .form-hint { font-size: .8rem; color: var(--text-muted); margin-top: .35rem; }
 .form-error { font-size: .82rem; color: #B4232C; margin-top: .35rem; display: none; }
@@ -1474,7 +1481,7 @@ a.team-card:hover .team-name { color: var(--sky-dark); }
 
 /* ─── 404 Page ────────────────────────────────────────────── */
 .error-page { padding: 6rem 1.5rem; text-align: center; }
-.error-page .error-code { font-size: 5rem; font-weight: 800; color: var(--sky); line-height: 1; }
+.error-page .error-code { font-size: 5rem; font-weight: 800; color: var(--sky-dark); line-height: 1; }
 .error-page h1 { margin: .5rem 0 1rem; }
 .error-page-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 900px; margin: 2.5rem auto 0; }
 .error-page-links a {

@@ -1,0 +1,8 @@
+# GitHub Pages build settings: keep internal docs off the public site.
+exclude:
+  - README.md
+  - ANALYTICS-SETUP.md
+  - CONTENT-GUIDE.md
+  - IMAGE-MANIFEST.md
+  - package.json
+  - package-lock.json
